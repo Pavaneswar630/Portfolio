@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pavaneshwar | root@kali:~</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --kali-blue: #367bf0;
+    --kali-green: #00ff41;
+    --kali-red: #ff2052;
+    --kali-cyan: #00d4ff;
+    --kali-purple: #9b59b6;
+    --kali-yellow: #f1c40f;
+    --kali-bg: #1a1b26;
+    --kali-panel: rgba(15,15,25,0.92);
+    --kali-border: rgba(54,123,240,0.4);
+    --text-dim: #6b7280;
+    --text-light: #c9d1d9;
+    --font-mono: 'Share Tech Mono', monospace;
+    --font-ui: 'Rajdhani', sans-serif;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: var(--font-mono);
+    background: #0d0e17;
+    overflow: hidden;
+    height: 100vh; width: 100vw;
+    color: var(--text-light);
+    cursor: default;
+    user-select: none;
+  }
+
+  /* ── WALLPAPER ── */
+  #wallpaper {
+    position: fixed; inset: 0; z-index: 0;
+    background: 
+      radial-gradient(ellipse at 20% 50%, rgba(54,123,240,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(0,212,255,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 80%, rgba(155,89,182,0.07) 0%, transparent 55%),
+      #0d0e17;
+    transition: background 0.8s ease;
+  }
+
+  /* Kali dragon SVG overlay */
+  #wallpaper::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='0.5' fill='%23367bf0' opacity='0.15'/%3E%3C/svg%3E");
+    background-size: 60px 60px;
+    opacity: 0.4;
+  }
+
+  /* Scan lines */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 9998; pointer-events: none;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+  }
+
+  /* ── TOP BAR ── */
+  #topbar {
+    position: fixed; top: 0; left: 0; right: 0; height: 28px; z-index: 9999;
+    background: rgba(10,11,20,0.97);
+    border-bottom: 1px solid var(--kali-border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 12px; font-size: 12px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 1px 20px rgba(54,123,240,0.2);
+  }
+  #topbar-left { display: flex; gap: 20px; align-items: center; }
+  #topbar-left span { color: var(--text-dim); cursor: pointer; transition: color .2s; }
+  #topbar-left span:hover { color: var(--kali-blue); }
+  .kali-logo { color: var(--kali-blue) !important; font-weight: bold; font-size: 13px; }
+  #topbar-right { display: flex; gap: 14px; align-items: center; }
+  #topbar-right span { color: var(--text-dim); font-size: 11px; }
+  #clock { color: var(--text-light) !important; font-size: 12px; }
+  .tray-icon { width: 14px; height: 14px; opacity: 0.6; cursor: pointer; transition: opacity .2s; }
+  .tray-icon:hover { opacity: 1; }
+
+  /* ── TASKBAR (bottom) ── */
+  #taskbar {
+    position: fixed; bottom: 0; left: 0; right: 0; height: 38px; z-index: 9999;
+    background: rgba(10,11,20,0.97);
+    border-top: 1px solid var(--kali-border);
+    display: flex; align-items: center; gap: 4px;
+    padding: 0 8px;
+    backdrop-filter: blur(12px);
+  }
+  .task-btn {
+    background: transparent; border: 1px solid transparent; color: var(--text-dim);
+    font-family: var(--font-mono); font-size: 11px;
+    padding: 4px 10px; border-radius: 4px; cursor: pointer; transition: all .2s;
+    white-space: nowrap; display: flex; align-items: center; gap: 5px;
+  }
+  .task-btn:hover { background: rgba(54,123,240,0.15); border-color: var(--kali-border); color: var(--kali-blue); }
+  .task-btn.active { background: rgba(54,123,240,0.2); border-color: var(--kali-blue); color: var(--kali-blue); }
+  .task-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--kali-blue); }
+
+  /* ── DESKTOP ICONS ── */
+  #desktop {
+    position: fixed; top: 36px; left: 0; bottom: 46px;
+    width: 100px; padding: 10px 5px;
+    display: flex; flex-direction: column; gap: 6px; z-index: 1;
+  }
+  .icon {
+    width: 90px; text-align: center; cursor: pointer;
+    padding: 8px 5px; border-radius: 6px; border: 1px solid transparent;
+    transition: all .2s;
+  }
+  .icon:hover { background: rgba(54,123,240,0.12); border-color: rgba(54,123,240,0.3); }
+  .icon:active { transform: scale(0.95); }
+  .icon svg { filter: drop-shadow(0 0 6px rgba(54,123,240,0.5)); }
+  .icon-label { font-size: 10px; margin-top: 4px; color: var(--text-light); text-shadow: 0 0 8px rgba(0,0,0,0.8); line-height: 1.2; }
+
+  /* ── WINDOWS ── */
+  .window {
+    position: absolute;
+    background: var(--kali-panel);
+    border: 1px solid var(--kali-border);
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(54,123,240,0.1) inset;
+    display: none; flex-direction: column;
+    min-width: 300px; min-height: 200px;
+    backdrop-filter: blur(16px);
+    transition: box-shadow .2s;
+    overflow: hidden;
+    resize: both;
+  }
+  .window.focused { box-shadow: 0 20px 60px rgba(0,0,0,0.9), 0 0 20px rgba(54,123,240,0.15); }
+
+  .titlebar {
+    background: linear-gradient(135deg, rgba(25,26,40,0.95), rgba(20,21,35,0.95));
+    border-bottom: 1px solid var(--kali-border);
+    padding: 7px 10px;
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: grab; flex-shrink: 0;
+  }
+  .titlebar:active { cursor: grabbing; }
+  .titlebar-title { font-size: 12px; color: var(--text-dim); display: flex; align-items: center; gap: 8px; }
+  .titlebar-title svg { opacity: 0.6; }
+  .win-controls { display: flex; gap: 6px; }
+  .wc { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; transition: opacity .2s; }
+  .wc:hover { opacity: 0.8; }
+  .wc.close { background: #ff5f56; }
+  .wc.min   { background: #ffbd2e; }
+  .wc.max   { background: #27c93f; }
+
+  /* ── TERMINAL ── */
+  #win-terminal { top: 40px; left: 110px; width: 720px; height: 430px; }
+  #terminal-body {
+    flex: 1; overflow-y: auto; padding: 12px;
+    font-family: var(--font-mono); font-size: 13px; line-height: 1.7;
+    color: #c9d1d9; cursor: text;
+  }
+  #terminal-body::-webkit-scrollbar { width: 4px; }
+  #terminal-body::-webkit-scrollbar-thumb { background: var(--kali-border); border-radius: 2px; }
+  .t-prompt { color: var(--kali-green); }
+  .t-at { color: var(--kali-blue); }
+  .t-dir { color: var(--kali-cyan); }
+  .t-output { color: #8b9dc3; white-space: pre-wrap; }
+  .t-error { color: var(--kali-red); }
+  .t-success { color: var(--kali-green); }
+  .t-cmd-line { display: flex; align-items: center; flex-wrap: nowrap; }
+  #cmd-input {
+    background: transparent; border: none; color: var(--kali-green);
+    font-family: var(--font-mono); font-size: 13px;
+    flex: 1; outline: none; caret-color: var(--kali-green);
+    margin-left: 4px;
+  }
+  .t-blink { animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ── SKILLS WINDOW ── */
+  #win-skills { top: 60px; left: 200px; width: 680px; height: 500px; }
+  #skills-body { flex: 1; overflow-y: auto; padding: 20px; }
+  #skills-body::-webkit-scrollbar { width: 4px; }
+  #skills-body::-webkit-scrollbar-thumb { background: var(--kali-border); }
+  .skill-section { margin-bottom: 24px; }
+  .skill-section h3 { font-family: var(--font-ui); font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--kali-blue); margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid rgba(54,123,240,0.2); }
+  .skill-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+  .skill-tag {
+    background: rgba(54,123,240,0.08); border: 1px solid rgba(54,123,240,0.25);
+    border-radius: 4px; padding: 7px 10px; font-size: 11px; color: #a0b4d0;
+    display: flex; align-items: center; gap: 6px; transition: all .2s; cursor: default;
+  }
+  .skill-tag:hover { background: rgba(54,123,240,0.18); border-color: var(--kali-blue); color: white; }
+  .skill-tag .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .dot-java { background: #f89820; }
+  .dot-python { background: #3776ab; }
+  .dot-js { background: #f7df1e; }
+  .dot-cpp { background: #00599c; }
+  .dot-sql { background: #336791; }
+  .dot-aws { background: #ff9900; }
+  .dot-docker { background: #2496ed; }
+  .dot-ml { background: #ff6b6b; }
+  .dot-test { background: var(--kali-green); }
+  .dot-ci { background: var(--kali-purple); }
+  .dot-other { background: var(--kali-cyan); }
+  .skill-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .skill-bar-label { width: 130px; font-size: 11px; color: var(--text-dim); flex-shrink: 0; }
+  .skill-bar-track { flex: 1; height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+  .skill-bar-fill { height: 100%; border-radius: 3px; animation: fillBar 1.5s ease-out forwards; transform-origin: left; }
+  @keyframes fillBar { from { width: 0 } }
+  .bar-java { background: linear-gradient(90deg, #f89820, #ffd700); }
+  .bar-python { background: linear-gradient(90deg, #3776ab, #4fc3f7); }
+  .bar-ml { background: linear-gradient(90deg, #ff6b6b, #ff4081); }
+  .bar-aws { background: linear-gradient(90deg, #ff9900, #ffcc00); }
+  .bar-test { background: linear-gradient(90deg, var(--kali-green), #00e676); }
+  .bar-docker { background: linear-gradient(90deg, #2496ed, #00d4ff); }
+
+  /* ── PROJECTS WINDOW ── */
+  #win-projects { top: 80px; left: 250px; width: 660px; height: 520px; }
+  #projects-body { flex: 1; overflow-y: auto; padding: 20px; }
+  #projects-body::-webkit-scrollbar { width: 4px; }
+  #projects-body::-webkit-scrollbar-thumb { background: var(--kali-border); }
+  .project-card {
+    background: rgba(54,123,240,0.05); border: 1px solid rgba(54,123,240,0.2);
+    border-radius: 8px; padding: 18px; margin-bottom: 16px;
+    transition: all .3s; cursor: default;
+  }
+  .project-card:hover { background: rgba(54,123,240,0.1); border-color: rgba(54,123,240,0.5); transform: translateX(3px); }
+  .project-card h3 { font-family: var(--font-ui); font-size: 16px; color: var(--kali-cyan); margin-bottom: 4px; }
+  .project-card .proj-tags { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0; }
+  .proj-tag { background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.25); color: var(--kali-cyan); font-size: 10px; padding: 2px 7px; border-radius: 3px; }
+  .project-card p { font-size: 12px; color: var(--text-dim); line-height: 1.7; }
+  .project-stats { display: flex; gap: 16px; margin-top: 12px; }
+  .pstat { font-size: 11px; color: var(--kali-green); }
+  .pstat span { color: var(--text-dim); }
+
+  /* ── DOCUMENT VIEWER (For Resume & Certs) ── */
+  #win-docviewer { top: 50px; left: 180px; width: 680px; height: 88vh; }
+  #docviewer-body { flex: 1; background: #333; overflow: hidden; }
+  #docviewer-frame { width: 100%; height: 100%; border: none; display: block; }
+
+  /* ── NEOFETCH WINDOW ── */
+  #win-neofetch { top: 100px; left: 160px; width: 560px; height: 310px; }
+  #neofetch-body { flex: 1; padding: 16px; font-family: var(--font-mono); font-size: 12px; line-height: 1.8; overflow: auto; }
+  .nf-art { color: var(--kali-blue); white-space: pre; font-size: 10px; float: left; margin-right: 24px; line-height: 1.4; }
+  .nf-info { overflow: hidden; }
+  .nf-key { color: var(--kali-blue); font-weight: bold; }
+  .nf-val { color: var(--text-light); }
+  .nf-colors { display: flex; gap: 4px; margin-top: 8px; }
+  .nf-color { width: 20px; height: 20px; border-radius: 2px; }
+
+  /* ── FILE MANAGER ── */
+  #win-files { top: 90px; left: 200px; width: 560px; height: 360px; }
+  #files-body { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  #files-path { background: rgba(0,0,0,0.3); padding: 6px 14px; font-size: 11px; color: var(--text-dim); border-bottom: 1px solid var(--kali-border); flex-shrink: 0; }
+  #files-grid { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-wrap: wrap; gap: 14px; align-content: flex-start; }
+  .file-item { width: 80px; text-align: center; cursor: pointer; padding: 8px; border-radius: 6px; border: 1px solid transparent; transition: all .2s; }
+  .file-item:hover { background: rgba(54,123,240,0.12); border-color: rgba(54,123,240,0.3); }
+  .file-item svg { display: block; margin: 0 auto; }
+  .file-label { font-size: 10px; margin-top: 5px; color: var(--text-dim); line-height: 1.2; }
+
+  /* ── SETTINGS ── */
+  #win-settings { top: 120px; left: 300px; width: 420px; height: 360px; }
+  #settings-body { flex: 1; padding: 20px; overflow-y: auto; }
+  .setting-section { margin-bottom: 20px; }
+  .setting-section h4 { font-family: var(--font-ui); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px; }
+  .bg-presets { display: flex; flex-wrap: wrap; gap: 6px; }
+  .preset-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-dim); font-family: var(--font-mono); font-size: 11px; padding: 6px 10px; border-radius: 4px; cursor: pointer; transition: all .2s; }
+  .preset-btn:hover { background: rgba(54,123,240,0.2); border-color: var(--kali-blue); color: var(--kali-blue); }
+  .url-row { display: flex; gap: 0; margin-top: 8px; }
+  .url-row input { flex: 1; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-family: var(--font-mono); font-size: 11px; padding: 7px 10px; border-radius: 4px 0 0 4px; outline: none; }
+  .url-row button { background: var(--kali-blue); border: none; color: white; font-family: var(--font-mono); font-size: 11px; padding: 7px 12px; border-radius: 0 4px 4px 0; cursor: pointer; }
+
+  /* ── MAIL ── */
+  #win-mail { top: 110px; left: 270px; width: 480px; height: 430px; }
+  #mail-body-wrap { flex: 1; padding: 18px; display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+  .mail-row { display: flex; align-items: center; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.07); border-radius: 5px; padding: 8px 12px; }
+  .mail-row label { width: 70px; font-size: 11px; color: var(--text-dim); }
+  .mail-row input { flex: 1; background: transparent; border: none; color: white; font-family: var(--font-mono); font-size: 12px; outline: none; }
+  #mail-msg { flex: 1; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.07); color: white; font-family: var(--font-mono); font-size: 12px; padding: 10px 12px; border-radius: 5px; outline: none; resize: none; min-height: 120px; }
+  #mail-send { background: var(--kali-blue); border: none; color: white; font-family: var(--font-ui); font-size: 14px; font-weight: 600; padding: 10px; border-radius: 5px; cursor: pointer; letter-spacing: 1px; transition: all .2s; }
+  #mail-send:hover { background: #4a8ef5; box-shadow: 0 0 20px rgba(54,123,240,0.4); }
+
+  /* ── CERTIFICATIONS ── */
+  #win-certs { top: 90px; left: 220px; width: 500px; height: 380px; }
+  #certs-body { flex: 1; overflow-y: auto; padding: 20px; }
+  .cert-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px; background: rgba(54,123,240,0.05); border: 1px solid rgba(54,123,240,0.15); border-radius: 6px; margin-bottom: 10px; transition: all .2s; }
+  .cert-item:hover { background: rgba(54,123,240,0.1); border-color: rgba(54,123,240,0.35); }
+  .cert-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 16px; }
+  .cert-info { flex: 1; }
+  .cert-info h4 { font-family: var(--font-ui); font-size: 14px; color: var(--text-light); margin-bottom: 3px; }
+  .cert-info p { font-size: 11px; color: var(--text-dim); margin-bottom: 8px;}
+  .cert-badge { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 10px; margin-top: 5px; }
+  .cert-btn { background: transparent; border: 1px solid rgba(54,123,240,0.5); color: var(--kali-blue); font-family: var(--font-mono); font-size: 10px; padding: 3px 8px; border-radius: 4px; margin-left: 8px; cursor: pointer; transition: all 0.2s; }
+  .cert-btn:hover { background: rgba(54,123,240,0.2); }
+
+  /* Notification */
+  #notif {
+    position: fixed; top: 38px; right: 12px; z-index: 99999;
+    background: rgba(15,16,28,0.95); border: 1px solid var(--kali-border);
+    border-radius: 6px; padding: 10px 14px; font-size: 12px;
+    min-width: 220px; box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+    transform: translateX(120%); transition: transform .3s ease;
+    backdrop-filter: blur(12px);
+  }
+  #notif.show { transform: translateX(0); }
+  #notif .n-title { color: var(--kali-blue); font-size: 11px; margin-bottom: 3px; }
+  #notif .n-msg { color: var(--text-dim); font-size: 11px; }
+
+  /* Boot screen */
+  #boot {
+    position: fixed; inset: 0; z-index: 99999;
+    background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-family: var(--font-mono);
+  }
+  #boot-logo { color: var(--kali-blue); font-size: 11px; white-space: pre; line-height: 1.2; margin-bottom: 20px; text-align: center; }
+  #boot-log { font-size: 11px; color: var(--kali-green); width: 500px; max-height: 200px; overflow: hidden; }
+  #boot-bar { width: 400px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 16px; overflow: hidden; }
+  #boot-fill { height: 100%; background: var(--kali-blue); border-radius: 2px; width: 0; transition: width .1s; }
+
+  /* Context menu */
+  #ctx-menu {
+    position: fixed; z-index: 99998;
+    background: rgba(15,16,28,0.97); border: 1px solid var(--kali-border);
+    border-radius: 6px; padding: 4px 0; min-width: 160px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6); display: none; backdrop-filter: blur(12px);
+  }
+  .ctx-item { padding: 7px 14px; font-size: 12px; color: var(--text-dim); cursor: pointer; transition: all .15s; }
+  .ctx-item:hover { background: rgba(54,123,240,0.15); color: var(--kali-blue); }
+  .ctx-sep { height: 1px; background: var(--kali-border); margin: 4px 0; }
+
+  /* Matrix rain canvas */
+  #matrix-canvas { position: fixed; inset: 0; z-index: 0; display: none; opacity: 0.15; }
+</style>
+</head>
+<body>
+
+<div id="boot">
+  <div id="boot-logo">
+██╗  ██╗ █████╗ ██╗     ██╗    ██╗     ██╗███╗   ██╗██╗   ██╗██╗  ██╗
+██║ ██╔╝██╔══██╗██║     ██║    ██║     ██║████╗  ██║██║   ██║╚██╗██╔╝
+█████╔╝ ███████║██║     ██║    ██║     ██║██╔██╗ ██║██║   ██║ ╚███╔╝ 
+██╔═██╗ ██╔══██║██║     ██║    ██║     ██║██║╚██╗██║██║   ██║ ██╔██╗ 
+██║  ██╗██║  ██║███████╗██║    ███████╗██║██║ ╚████║╚██████╔╝██╔╝ ██╗
+╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝    ╚══════╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝
+  </div>
+  <div id="boot-log"></div>
+  <div id="boot-bar"><div id="boot-fill"></div></div>
+</div>
+
+<canvas id="matrix-canvas"></canvas>
+<div id="wallpaper"></div>
+
+<div id="topbar">
+  <div id="topbar-left">
+    <span class="kali-logo">&#9670; KALI</span>
+    <span onclick="openWindow('win-terminal')">Terminal</span>
+    <span onclick="openWindow('win-files')">Files</span>
+    <span onclick="openWindow('win-skills')">Skills</span>
+    <span onclick="openWindow('win-projects')">Projects</span>
+    <span onclick="openWindow('win-certs')">Certs</span>
+    <span onclick="openWindow('win-settings')">Settings</span>
+  </div>
+  <div id="topbar-right">
+    <svg class="tray-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+    <svg class="tray-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4zM12 21c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm2-4H10V7h4v10z"/></svg>
+    <span id="clock">00:00</span>
+  </div>
+</div>
+
+<div id="desktop">
+  <div class="icon" ondblclick="openWindow('win-terminal')">
+    <svg viewBox="0 0 24 24" fill="#00ff41" width="40" height="40"><path d="M20 4H4C2.9 4 2 4.9 2 6v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zm-9-1h4v-2h-4v2zm-4-4l1.41-1.41L7.83 11l1.41-1.41L8 8.17 4.83 11 8 14.17zM12 16h4v-2h-4v2z"/></svg>
+    <div class="icon-label">Terminal</div>
+  </div>
+  <div class="icon" ondblclick="openWindow('win-files')">
+    <svg viewBox="0 0 24 24" fill="#367bf0" width="40" height="40"><path d="M10 4H4c-1.1 0-2 .9-2 2l-.01 12c0 1.1.9 2 2.01 2H20c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+    <div class="icon-label">Files</div>
+  </div>
+  <div class="icon" ondblclick="openWindow('win-skills')">
+    <svg viewBox="0 0 24 24" fill="#f7df1e" width="40" height="40"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+    <div class="icon-label">Skills</div>
+  </div>
+  <div class="icon" ondblclick="openWindow('win-projects')">
+    <svg viewBox="0 0 24 24" fill="#9b59b6" width="40" height="40"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+    <div class="icon-label">Projects</div>
+  </div>
+  <div class="icon" ondblclick="openWindow('win-certs')">
+    <svg viewBox="0 0 24 24" fill="#f1c40f" width="40" height="40"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 6c1.4 0 2.8 1.1 2.8 2.5v.5c.6 0 1.2.6 1.2 1.2v3.5c0 .6-.6 1.3-1.3 1.3H9.2c-.6 0-1.2-.6-1.2-1.2v-3.5c0-.7.6-1.3 1.2-1.3v-.5C9.2 8.1 10.6 7 12 7zm0 1.2c-.8 0-1.5.5-1.5 1.3v.5h3v-.5c0-.8-.7-1.3-1.5-1.3z"/></svg>
+    <div class="icon-label">Certs</div>
+  </div>
+  <div class="icon" ondblclick="openWindow('win-mail')">
+    <svg viewBox="0 0 24 24" fill="#00d4ff" width="40" height="40"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+    <div class="icon-label">Mail</div>
+  </div>
+  <div class="icon" ondblclick="openWindow('win-settings')">
+    <svg viewBox="0 0 24 24" fill="#aaa" width="40" height="40"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.3-.07.63-.07.94s.03.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+    <div class="icon-label">Settings</div>
+  </div>
+</div>
+
+<div id="win-terminal" class="window" onmousedown="bringToFront('win-terminal')">
+  <div class="titlebar" id="th-terminal">
+    <div class="titlebar-title">
+      <svg viewBox="0 0 24 24" fill="#00ff41" width="13" height="13"><path d="M20 4H4C2.9 4 2 4.9 2 6v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"/></svg>
+      Terminal — root@kali:~
+    </div>
+    <div class="win-controls">
+      <div class="wc min" onclick="minimizeWindow('win-terminal')"></div>
+      <div class="wc max" onclick="maximizeWindow('win-terminal')"></div>
+      <div class="wc close" onclick="closeWindow('win-terminal')"></div>
+    </div>
+  </div>
+  <div id="terminal-body" onclick="document.getElementById('cmd-input').focus()">
+    <div id="term-history"></div>
+    <div class="t-cmd-line">
+      <span class="t-prompt">root</span><span class="t-at">@pavaneshwar</span>:<span class="t-dir">~</span>#&nbsp;
+      <input id="cmd-input" type="text" spellcheck="false" autocomplete="off">
+    </div>
+  </div>
+</div>
+
+<div id="win-skills" class="window" onmousedown="bringToFront('win-skills')">
+  <div class="titlebar" id="th-skills">
+    <div class="titlebar-title">
+      <svg viewBox="0 0 24 24" fill="#f7df1e" width="13" height="13"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+      Technical Arsenal — pavaneshwar@skills
+    </div>
+    <div class="win-controls">
+      <div class="wc min" onclick="minimizeWindow('win-skills')"></div>
+      <div class="wc max" onclick="maximizeWindow('win-skills')"></div>
+      <div class="wc close" onclick="closeWindow('win-skills')"></div>
+    </div>
+  </div>
+  <div id="skills-body">
+    <div class="skill-section">
+      <h3>Languages & Proficiency</h3>
+      <div class="skill-bar-row"><div class="skill-bar-label">Java</div><div class="skill-bar-track"><div class="skill-bar-fill bar-java" style="width:88%"></div></div><span style="font-size:11px;color:var(--kali-yellow);margin-left:6px">88%</span></div>
+      <div class="skill-bar-row"><div class="skill-bar-label">Python</div><div class="skill-bar-track"><div class="skill-bar-fill bar-python" style="width:85%"></div></div><span style="font-size:11px;color:var(--kali-cyan);margin-left:6px">85%</span></div>
+      <div class="skill-bar-row"><div class="skill-bar-label">Machine Learning</div><div class="skill-bar-track"><div class="skill-bar-fill bar-ml" style="width:80%"></div></div><span style="font-size:11px;color:#ff6b6b;margin-left:6px">80%</span></div>
+      <div class="skill-bar-row"><div class="skill-bar-label">Test Automation</div><div class="skill-bar-track"><div class="skill-bar-fill bar-test" style="width:82%"></div></div><span style="font-size:11px;color:var(--kali-green);margin-left:6px">82%</span></div>
+      <div class="skill-bar-row"><div class="skill-bar-label">Docker / CI-CD</div><div class="skill-bar-track"><div class="skill-bar-fill bar-docker" style="width:75%"></div></div><span style="font-size:11px;color:var(--kali-cyan);margin-left:6px">75%</span></div>
+      <div class="skill-bar-row"><div class="skill-bar-label">AWS / Cloud</div><div class="skill-bar-track"><div class="skill-bar-fill bar-aws" style="width:70%"></div></div><span style="font-size:11px;color:#ff9900;margin-left:6px">70%</span></div>
+    </div>
+    <div class="skill-section">
+      <h3>Languages & Platforms</h3>
+      <div class="skill-grid">
+        <div class="skill-tag"><div class="dot dot-java"></div>Java</div>
+        <div class="skill-tag"><div class="dot dot-python"></div>Python</div>
+        <div class="skill-tag"><div class="dot dot-cpp"></div>C++</div>
+        <div class="skill-tag"><div class="dot dot-js"></div>JavaScript</div>
+        <div class="skill-tag"><div class="dot dot-sql"></div>SQL</div>
+        <div class="skill-tag"><div class="dot dot-other"></div>OOP & Design Patterns</div>
+        <div class="skill-tag"><div class="dot dot-other"></div>Data Structures</div>
+        <div class="skill-tag"><div class="dot dot-other"></div>Algorithms</div>
+      </div>
+    </div>
+    <div class="skill-section">
+      <h3>Architecture & Cloud</h3>
+      <div class="skill-grid">
+        <div class="skill-tag"><div class="dot dot-aws"></div>AWS</div>
+        <div class="skill-tag"><div class="dot dot-other"></div>GCP</div>
+        <div class="skill-tag"><div class="dot dot-other"></div>Distributed Systems</div>
+        <div class="skill-tag"><div class="dot dot-other"></div>Microservices</div>
+        <div class="skill-tag"><div class="dot dot-other"></div>Serverless</div>
+        <div class="skill-tag"><div class="dot dot-other"></div>Fault-tolerant Design</div>
+        <div class="skill-tag"><div class="dot dot-other"></div>CRM Platforms</div>
+        <div class="skill-tag"><div class="dot dot-other"></div>High-availability</div>
+      </div>
+    </div>
+    <div class="skill-section">
+      <h3>Test Automation & Quality</h3>
+      <div class="skill-grid">
+        <div class="skill-tag"><div class="dot dot-test"></div>Selenium WebDriver</div>
+        <div class="skill-tag"><div class="dot dot-test"></div>JUnit</div>
+        <div class="skill-tag"><div class="dot dot-test"></div>TDD Principles</div>
+        <div class="skill-tag"><div class="dot dot-test"></div>Unit & Functional Tests</div>
+        <div class="skill-tag"><div class="dot dot-test"></div>White-Box Testing</div>
+        <div class="skill-tag"><div class="dot dot-test"></div>Code Coverage Metrics</div>
+        <div class="skill-tag"><div class="dot dot-test"></div>CI-integrated Suites</div>
+        <div class="skill-tag"><div class="dot dot-test"></div>SLA-driven QA</div>
+      </div>
+    </div>
+    <div class="skill-section">
+      <h3>DevOps & Telemetry</h3>
+      <div class="skill-grid">
+        <div class="skill-tag"><div class="dot dot-docker"></div>Docker</div>
+        <div class="skill-tag"><div class="dot dot-ci"></div>GitHub Actions</div>
+        <div class="skill-tag"><div class="dot dot-ci"></div>CI/CD Pipelines</div>
+        <div class="skill-tag"><div class="dot dot-other"></div>Structured Logging</div>
+        <div class="skill-tag"><div class="dot dot-other"></div>Perf Monitoring</div>
+        <div class="skill-tag"><div class="dot dot-other"></div>Latency Benchmarking</div>
+        <div class="skill-tag"><div class="dot dot-other"></div>Observability</div>
+        <div class="skill-tag"><div class="dot dot-other"></div>Agile / Scrum</div>
+      </div>
+    </div>
+    <div class="skill-section">
+      <h3>AI & Innovation</h3>
+      <div class="skill-grid">
+        <div class="skill-tag"><div class="dot dot-ml"></div>ML Integration</div>
+        <div class="skill-tag"><div class="dot dot-ml"></div>AI-assisted Dev</div>
+        <div class="skill-tag"><div class="dot dot-ml"></div>GitHub Copilot</div>
+        <div class="skill-tag"><div class="dot dot-ml"></div>Agentforce Concepts</div>
+        <div class="skill-tag"><div class="dot dot-ml"></div>Einstein AI</div>
+        <div class="skill-tag"><div class="dot dot-ml"></div>Data-driven Decisions</div>
+        <div class="skill-tag"><div class="dot dot-ml"></div>FastAPI</div>
+        <div class="skill-tag"><div class="dot dot-ml"></div>ETL Pipelines</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="win-projects" class="window" onmousedown="bringToFront('win-projects')">
+  <div class="titlebar" id="th-projects">
+    <div class="titlebar-title">
+      <svg viewBox="0 0 24 24" fill="#9b59b6" width="13" height="13"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+      Projects — pavaneshwar@portfolio
+    </div>
+    <div class="win-controls">
+      <div class="wc min" onclick="minimizeWindow('win-projects')"></div>
+      <div class="wc max" onclick="maximizeWindow('win-projects')"></div>
+      <div class="wc close" onclick="closeWindow('win-projects')"></div>
+    </div>
+  </div>
+  <div id="projects-body">
+    <div class="project-card">
+      <h3>ParcelEase — Distributed Logistics Ecosystem</h3>
+      <div class="proj-tags">
+        <span class="proj-tag">Java</span><span class="proj-tag">AWS</span><span class="proj-tag">Docker</span><span class="proj-tag">REST APIs</span><span class="proj-tag">SQL</span><span class="proj-tag">GitHub Actions</span>
+      </div>
+      <p>Multi-tiered distributed logistics platform serving 500+ concurrent users at 99.9% uptime. Implements fault-tolerant design, automated failover, and cloud-native architecture. CI/CD via Docker + GitHub Actions reduced deployment time by 30%.</p>
+      <div class="project-stats">
+        <div class="pstat">500+ <span>concurrent users</span></div>
+        <div class="pstat">99.9% <span>uptime</span></div>
+        <div class="pstat">&lt;50ms <span>query latency</span></div>
+        <div class="pstat">35% <span>throughput ↑</span></div>
+      </div>
+    </div>
+    <div class="project-card">
+      <h3>Time-Series Anomaly Detection API</h3>
+      <div class="proj-tags">
+        <span class="proj-tag">Python</span><span class="proj-tag">FastAPI</span><span class="proj-tag">ML</span><span class="proj-tag">Cloud</span><span class="proj-tag">Telemetry</span>
+      </div>
+      <p>High-throughput async RESTful API integrating ML-based anomaly detection. Processes 5,000+ req/sec with zero dropped requests. Full endpoint coverage via automated test suites; 50% API latency reduction through metrics-driven optimization.</p>
+      <div class="project-stats">
+        <div class="pstat">5,000+ <span>req/sec</span></div>
+        <div class="pstat">0 <span>dropped reqs</span></div>
+        <div class="pstat">50% <span>latency ↓</span></div>
+        <div class="pstat">100% <span>endpoint coverage</span></div>
+      </div>
+    </div>
+    <div class="project-card">
+      <h3>Skills Exchange Platform — Selenium Automation</h3>
+      <div class="proj-tags">
+        <span class="proj-tag">Java</span><span class="proj-tag">Selenium</span><span class="proj-tag">JUnit</span><span class="proj-tag">White-Box Testing</span>
+      </div>
+      <p>Complete Selenium WebDriver + JUnit automation framework in Eclipse automating 100% of critical user flows. Applied white-box testing for full branch coverage and tracked 15+ documented defects with SLA-driven resolution.</p>
+      <div class="project-stats">
+        <div class="pstat">100% <span>flow coverage</span></div>
+        <div class="pstat">60% <span>regression time ↓</span></div>
+        <div class="pstat">15+ <span>defects tracked</span></div>
+      </div>
+    </div>
+    <div class="project-card">
+      <h3>Prashikshan — NEP 2020 Internship Management</h3>
+      <div class="proj-tags">
+        <span class="proj-tag">Python</span><span class="proj-tag">Java</span><span class="proj-tag">SQL</span><span class="proj-tag">ETL</span>
+      </div>
+      <p>Automated ETL pipelines compliant with NEP 2020 guidelines for internship lifecycle management. Reduced manual processing overhead by 40% and saved 15+ hours weekly with production-grade automation.</p>
+      <div class="project-stats">
+        <div class="pstat">40% <span>overhead ↓</span></div>
+        <div class="pstat">15+ <span>hrs/week saved</span></div>
+        <div class="pstat">20% <span>post-deploy bugs ↓</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="win-files" class="window" onmousedown="bringToFront('win-files')">
+  <div class="titlebar" id="th-files">
+    <div class="titlebar-title">
+      <svg viewBox="0 0 24 24" fill="#367bf0" width="13" height="13"><path d="M10 4H4c-1.1 0-2 .9-2 2l-.01 12c0 1.1.9 2 2.01 2H20c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+      Files — /root/Documents
+    </div>
+    <div class="win-controls">
+      <div class="wc min" onclick="minimizeWindow('win-files')"></div>
+      <div class="wc max" onclick="maximizeWindow('win-files')"></div>
+      <div class="wc close" onclick="closeWindow('win-files')"></div>
+    </div>
+  </div>
+  <div id="files-body">
+    <div id="files-path">/root/Documents/pavaneshwar/</div>
+    <div id="files-grid">
+      <div class="file-item" ondblclick="viewDocument('resources/resume.pdf', 'Document Viewer — Resume.pdf')">
+        <svg viewBox="0 0 24 24" fill="#ff5f56" width="40" height="40"><path d="M14 2H6C4.9 2 4.01 2.9 4.01 4L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8L14 2zm1 9h-4v1h3c.55 0 1 .45 1 1v3c0 .55-.45 1-1 1h-1v1h-2v-1H9v-2h4v-1h-3c-.55 0-1-.45-1-1v-3c0-.55.45-1 1-1h1V9h2v1h2v2zm-2-6.5L16.5 9H13V4.5z"/></svg>
+        <div class="file-label">Resume.pdf</div>
+      </div>
+      <div class="file-item" ondblclick="openWindow('win-skills')">
+        <svg viewBox="0 0 24 24" fill="#f7df1e" width="40" height="40"><path d="M14 2H6C4.9 2 4 2.9 4 4v16c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13z"/></svg>
+        <div class="file-label">skills.json</div>
+      </div>
+      <div class="file-item" ondblclick="openWindow('win-projects')">
+        <svg viewBox="0 0 24 24" fill="#9b59b6" width="40" height="40"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg>
+        <div class="file-label">projects/</div>
+      </div>
+      <div class="file-item" ondblclick="openWindow('win-certs')">
+        <svg viewBox="0 0 24 24" fill="#f1c40f" width="40" height="40"><path d="M14 2H6C4.9 2 4 2.9 4 4v16c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13z"/></svg>
+        <div class="file-label">certs.txt</div>
+      </div>
+      <div class="file-item" ondblclick="openWindow('win-terminal')">
+        <svg viewBox="0 0 24 24" fill="#00ff41" width="40" height="40"><path d="M20 4H4C2.9 4 2 4.9 2 6v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"/></svg>
+        <div class="file-label">run_me.sh</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="win-docviewer" class="window" onmousedown="bringToFront('win-docviewer')">
+  <div class="titlebar" id="th-docviewer">
+    <div class="titlebar-title">
+      <svg viewBox="0 0 24 24" fill="#ff5f56" width="13" height="13"><path d="M14 2H6C4.9 2 4 2.9 4 4v16c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/></svg>
+      <span id="docviewer-title">Document Viewer</span>
+    </div>
+    <div class="win-controls">
+      <div class="wc min" onclick="minimizeWindow('win-docviewer')"></div>
+      <div class="wc max" onclick="maximizeWindow('win-docviewer')"></div>
+      <div class="wc close" onclick="closeWindow('win-docviewer')"></div>
+    </div>
+  </div>
+  <div id="docviewer-body">
+    <iframe id="docviewer-frame" src="" title="Document Viewer"></iframe>
+  </div>
+</div>
+
+<div id="win-neofetch" class="window" onmousedown="bringToFront('win-neofetch')">
+  <div class="titlebar" id="th-neofetch">
+    <div class="titlebar-title">Terminal — neofetch output</div>
+    <div class="win-controls">
+      <div class="wc close" onclick="closeWindow('win-neofetch')"></div>
+    </div>
+  </div>
+  <div id="neofetch-body">
+    <pre class="nf-art">⠀⠀⠀⠀⠀⠀⠀⣀⣤⣶⣾⣿⣿⣿⣿⣷⣶⣤⣀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣄⠀⠀
+⠀⠀⢀⣾⣿⣿⣿⣿⣿⡿⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⡀
+⠀⣠⣿⣿⣿⣿⣿⣿⡏⠀⠀⠈⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧
+⢠⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⣾⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿
+⠈⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠁
+⠀⠈⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠁⠀
+⠀⠀⠀⠙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⠀⠀
+⠀⠀⠀⠀⠀⠙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⠀⠀⠀⠀</pre>
+    <div class="nf-info">
+      <div><span class="nf-key">pavaneshwar</span><span class="nf-val">@kali</span></div>
+      <div>──────────────────────</div>
+      <div><span class="nf-key">OS: </span><span class="nf-val">Kali GNU/Linux Rolling x86_64</span></div>
+      <div><span class="nf-key">Host: </span><span class="nf-val">SIMATS Engineering Portfolio</span></div>
+      <div><span class="nf-key">Kernel: </span><span class="nf-val">6.6.9-amd64</span></div>
+      <div><span class="nf-key">Uptime: </span><span class="nf-val">22 years, 0 months</span></div>
+      <div><span class="nf-key">Shell: </span><span class="nf-val">zsh 5.9</span></div>
+      <div><span class="nf-key">DE: </span><span class="nf-val">XFCE 4.18</span></div>
+      <div><span class="nf-key">CGPA: </span><span class="nf-val" style="color:var(--kali-green)">7.88 / 10.0</span></div>
+      <div><span class="nf-key">Role: </span><span class="nf-val">Software/ML Engineer</span></div>
+      <div><span class="nf-key">Backlogs: </span><span class="nf-val" style="color:var(--kali-green)">0 (clean)</span></div>
+      <div><span class="nf-key">Contact: </span><span class="nf-val">pavaneswar224@gmail.com</span></div>
+      <div class="nf-colors">
+        <div class="nf-color" style="background:#000"></div>
+        <div class="nf-color" style="background:#cc0000"></div>
+        <div class="nf-color" style="background:#4e9a06"></div>
+        <div class="nf-color" style="background:#c4a000"></div>
+        <div class="nf-color" style="background:#367bf0"></div>
+        <div class="nf-color" style="background:#75507b"></div>
+        <div class="nf-color" style="background:#06989a"></div>
+        <div class="nf-color" style="background:#d3d7cf"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="win-certs" class="window" onmousedown="bringToFront('win-certs')">
+  <div class="titlebar" id="th-certs">
+    <div class="titlebar-title">
+      <svg viewBox="0 0 24 24" fill="#f1c40f" width="13" height="13"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+      Certifications & Awards
+    </div>
+    <div class="win-controls">
+      <div class="wc min" onclick="minimizeWindow('win-certs')"></div>
+      <div class="wc close" onclick="closeWindow('win-certs')"></div>
+    </div>
+  </div>
+  <div id="certs-body">
+    <div class="cert-item">
+      <div class="cert-icon" style="background:rgba(54,123,240,0.15)">🏦</div>
+      <div class="cert-info">
+        <h4>Software Engineering Simulation</h4>
+        <p>JPMorgan Chase & Co. — Forage Platform</p>
+        <div>
+            <span class="cert-badge" style="background:rgba(54,123,240,0.15);color:var(--kali-blue);">FinTech</span>
+            <button class="cert-btn" onclick="viewDocument('resources/jpmorgan_cert.pdf', 'Document Viewer — JPMorgan_Cert.pdf')">View Certificate</button>
+        </div>
+      </div>
+    </div>
+    <div class="cert-item">
+      <div class="cert-icon" style="background:rgba(241,196,15,0.15)">🗄️</div>
+      <div class="cert-info">
+        <h4>Oracle SQL Certified Specialist</h4>
+        <p>Oracle Corporation — Database Fundamentals</p>
+        <div>
+            <span class="cert-badge" style="background:rgba(241,196,15,0.15);color:var(--kali-yellow);">Database</span>
+            <button class="cert-btn" onclick="viewDocument('resources/oracle_cert.pdf', 'Document Viewer — Oracle_Cert.pdf')">View Certificate</button>
+        </div>
+      </div>
+    </div>
+    <div class="cert-item">
+      <div class="cert-icon" style="background:rgba(255,32,82,0.15)">🛡️</div>
+      <div class="cert-info">
+        <h4>Ethical Hacking</h4>
+        <p>NPTEL — IIT Certified Course</p>
+        <div>
+            <span class="cert-badge" style="background:rgba(255,32,82,0.15);color:var(--kali-red);">CyberSec</span>
+            <button class="cert-btn" onclick="viewDocument('resources/nptel_cert.pdf', 'Document Viewer — NPTEL_Cert.pdf')">View Certificate</button>
+        </div>
+      </div>
+    </div>
+    <div class="cert-item">
+      <div class="cert-icon" style="background:rgba(0,255,65,0.15)">🏆</div>
+      <div class="cert-info">
+        <h4>Best Student Award 2026</h4>
+        <p>Indian Forums</p>
+        <div>
+            <span class="cert-badge" style="background:rgba(0,255,65,0.15);color:var(--kali-green);">Award</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="win-settings" class="window" onmousedown="bringToFront('win-settings')">
+  <div class="titlebar" id="th-settings">
+    <div class="titlebar-title">System Settings</div>
+    <div class="win-controls">
+      <div class="wc close" onclick="closeWindow('win-settings')"></div>
+    </div>
+  </div>
+  <div id="settings-body">
+    <div class="setting-section">
+      <h4>Wallpaper / Theme</h4>
+      <div class="bg-presets">
+        <button class="preset-btn" onclick="setWallpaper('default')">🖥 Dark Default</button>
+        <button class="preset-btn" onclick="setWallpaper('matrix')">🟩 Matrix Rain</button>
+        <button class="preset-btn" onclick="setWallpaper('purple')">🌌 Void Purple</button>
+        <button class="preset-btn" onclick="setWallpaper('ocean')">🌊 Deep Ocean</button>
+        <button class="preset-btn" onclick="setWallpaper('hacker')">💀 Hacker Red</button>
+      </div>
+      <div class="url-row" style="margin-top:10px">
+        <input type="text" id="custom-url" placeholder="Custom image URL...">
+        <button onclick="setCustomWallpaper()">Apply</button>
+      </div>
+    </div>
+    <div class="setting-section" style="margin-top:16px">
+      <h4>System Info</h4>
+      <div style="font-size:11px;color:var(--text-dim);line-height:2;">
+        <div>User: <span style="color:var(--kali-green)">root</span></div>
+        <div>Hostname: <span style="color:var(--kali-cyan)">pavaneshwar-kali</span></div>
+        <div>Version: <span style="color:var(--text-light)">Portfolio v2.0</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="win-mail" class="window" onmousedown="bringToFront('win-mail')">
+  <div class="titlebar" id="th-mail">
+    <div class="titlebar-title">
+      <svg viewBox="0 0 24 24" fill="#00d4ff" width="13" height="13"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+      Mail — New Transmission
+    </div>
+    <div class="win-controls">
+      <div class="wc close" onclick="closeWindow('win-mail')"></div>
+    </div>
+  </div>
+  <div id="mail-body-wrap">
+    <div class="mail-row"><label>To:</label><input type="text" value="pavaneswar224@gmail.com" readonly></div>
+    <div class="mail-row"><label>Subject:</label><input type="text" id="mail-subject" placeholder="Let's work together!"></div>
+    <textarea id="mail-msg" placeholder="Type your message..."></textarea>
+    <button id="mail-send" onclick="sendMail()">&#9654; Send Transmission</button>
+  </div>
+</div>
+
+<div id="taskbar">
+  <div id="taskbar-apps" style="display:flex;gap:4px;flex:1;overflow:hidden;align-items:center;"></div>
+</div>
+
+<div id="notif">
+  <div class="n-title" id="notif-title">System</div>
+  <div class="n-msg" id="notif-msg">Ready</div>
+</div>
+
+<div id="ctx-menu">
+  <div class="ctx-item" onclick="openWindow('win-terminal');hideCtx()">Open Terminal</div>
+  <div class="ctx-item" onclick="openWindow('win-files');hideCtx()">File Manager</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="openWindow('win-settings');hideCtx()">System Settings</div>
+  <div class="ctx-item" onclick="openWindow('win-neofetch');addNfCommand();hideCtx()">Run neofetch</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="closeAllWindows();hideCtx()">Close All Windows</div>
+</div>
+
+<script>
+// ── BOOT SEQUENCE ──
+const bootLogs = [
+  "[  0.001] Initializing Kali GNU/Linux...",
+  "[  0.042] Loading kernel modules...",
+  "[  0.118] Starting system services...",
+  "[  0.203] Mounting filesystems...",
+  "[  0.290] Starting network manager...",
+  "[  0.355] Loading user profile: pavaneshwar",
+  "[  0.421] Starting XFCE4 session...",
+  "[  0.499] Loading portfolio assets...",
+  "[  0.580] Initializing terminal emulator...",
+  "[  0.650] Boot complete. Welcome to Kali Linux!"
+];
+const bootEl = document.getElementById('boot-log');
+const bootFill = document.getElementById('boot-fill');
+let bi = 0;
+function runBoot() {
+  if(bi < bootLogs.length) {
+    const div = document.createElement('div');
+    div.textContent = bootLogs[bi];
+    if(bi === bootLogs.length-1) div.style.color = '#00ff41';
+    bootEl.appendChild(div);
+    bootFill.style.width = ((bi+1)/bootLogs.length*100)+'%';
+    bi++;
+    setTimeout(runBoot, 90 + Math.random()*80);
+  } else {
+    setTimeout(() => {
+      document.getElementById('boot').style.opacity = '0';
+      document.getElementById('boot').style.transition = 'opacity 0.8s';
+      setTimeout(() => { document.getElementById('boot').style.display='none'; }, 800);
+      updateClock();
+      setTimeout(() => { openWindow('win-terminal'); showNotif('System','Welcome back, root'); printBootMsg(); }, 900);
+    }, 400);
+  }
+}
+setTimeout(runBoot, 300);
+
+// ── CLOCK ──
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+}
+setInterval(updateClock, 1000);
+
+// ── NOTIFICATION ──
+let ntimer;
+function showNotif(title, msg) {
+  document.getElementById('notif-title').textContent = title;
+  document.getElementById('notif-msg').textContent = msg;
+  document.getElementById('notif').classList.add('show');
+  clearTimeout(ntimer);
+  ntimer = setTimeout(() => document.getElementById('notif').classList.remove('show'), 3000);
+}
+
+// ── Z-INDEX ──
+let zTop = 100;
+function bringToFront(id) {
+  zTop++;
+  document.getElementById(id).style.zIndex = zTop;
+  document.querySelectorAll('.task-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.querySelector(`.task-btn[data-win="${id}"]`);
+  if(btn) btn.classList.add('active');
+}
+
+// ── TASKBAR ──
+const taskbarApps = document.getElementById('taskbar-apps');
+function addToTaskbar(id, label) {
+  if(document.querySelector(`.task-btn[data-win="${id}"]`)) return;
+  const btn = document.createElement('button');
+  btn.className = 'task-btn'; btn.dataset.win = id;
+  btn.innerHTML = `<div class="task-dot"></div>${label}`;
+  btn.onclick = () => toggleWindowFromTaskbar(id);
+  taskbarApps.appendChild(btn);
+}
+function removeFromTaskbar(id) {
+  const btn = document.querySelector(`.task-btn[data-win="${id}"]`);
+  if(btn) btn.remove();
+}
+
+// ── WINDOW MANAGEMENT ──
+const winLabels = {
+  'win-terminal':'Terminal','win-skills':'Skills','win-projects':'Projects',
+  'win-files':'Files','win-docviewer':'Document','win-neofetch':'neofetch',
+  'win-certs':'Certs','win-settings':'Settings','win-mail':'Mail'
+};
+function openWindow(id) {
+  const win = document.getElementById(id);
+  if(!win) return;
+  win.style.display = 'flex';
+  bringToFront(id);
+  addToTaskbar(id, winLabels[id]||id);
+  if(id==='win-terminal') setTimeout(()=>document.getElementById('cmd-input').focus(),100);
+}
+function closeWindow(id) {
+  document.getElementById(id).style.display = 'none';
+  removeFromTaskbar(id);
+}
+function minimizeWindow(id) {
+  document.getElementById(id).style.display = 'none';
+  const btn = document.querySelector(`.task-btn[data-win="${id}"]`);
+  if(btn) btn.classList.remove('active');
+}
+function maximizeWindow(id) {
+  const win = document.getElementById(id);
+  if(win.dataset.maximized==='1') {
+    win.style.top=win.dataset.pt; win.style.left=win.dataset.pl;
+    win.style.width=win.dataset.pw; win.style.height=win.dataset.ph;
+    win.dataset.maximized='0';
+  } else {
+    win.dataset.pt=win.style.top; win.dataset.pl=win.style.left;
+    win.dataset.pw=win.style.width; win.dataset.ph=win.style.height;
+    win.style.top='28px'; win.style.left='100px';
+    win.style.width='calc(100vw - 100px)'; win.style.height='calc(100vh - 66px)';
+    win.dataset.maximized='1';
+  }
+}
+function toggleWindowFromTaskbar(id) {
+  const win = document.getElementById(id);
+  if(win.style.display==='none') { openWindow(id); }
+  else { bringToFront(id); }
+}
+function closeAllWindows() {
+  document.querySelectorAll('.window').forEach(w => { w.style.display='none'; });
+  taskbarApps.innerHTML = '';
+}
+
+// ── DOCUMENT VIEWER (New logic for Resume & Certs) ──
+function viewDocument(filePath, docTitle) {
+    document.getElementById('docviewer-title').textContent = docTitle;
+    document.getElementById('docviewer-frame').src = filePath;
+    openWindow('win-docviewer');
+}
+
+// ── DRAG ──
+function makeDraggable(winId, headerId) {
+  const win = document.getElementById(winId);
+  const hdr = document.getElementById(headerId);
+  if(!win||!hdr) return;
+  let x0,y0,wx,wy;
+  hdr.onmousedown = e => {
+    e.preventDefault();
+    bringToFront(winId);
+    wx = win.offsetLeft; wy = win.offsetTop;
+    x0 = e.clientX; y0 = e.clientY;
+    document.onmousemove = e2 => {
+      win.style.left = (wx + e2.clientX - x0) + 'px';
+      win.style.top  = (wy + e2.clientY - y0) + 'px';
+    };
+    document.onmouseup = () => { document.onmousemove = null; document.onmouseup = null; };
+  };
+}
+['terminal','skills','projects','files','docviewer','neofetch','certs','settings','mail'].forEach(n => {
+  makeDraggable('win-'+n, 'th-'+n);
+});
+
+// ── CONTEXT MENU ──
+document.addEventListener('contextmenu', e => {
+  e.preventDefault();
+  if(e.target.closest('.window')||e.target.closest('#topbar')||e.target.closest('#taskbar')) return;
+  const m = document.getElementById('ctx-menu');
+  m.style.display='block'; m.style.left=e.clientX+'px'; m.style.top=e.clientY+'px';
+});
+document.addEventListener('click', hideCtx);
+function hideCtx() { document.getElementById('ctx-menu').style.display='none'; }
+
+// ── TERMINAL ──
+const termHistory = document.getElementById('term-history');
+const cmdInput = document.getElementById('cmd-input');
+let cmdStack = [], cmdIdx = -1;
+
+function addTermLine(html) {
+  termHistory.insertAdjacentHTML('beforeend', html);
+  document.getElementById('terminal-body').scrollTop = 999999;
+}
+
+function printBootMsg() {
+  addTermLine(`<div class="t-output" style="color:#367bf0;">╔══════════════════════════════════════════════╗</div>`);
+  addTermLine(`<div class="t-output" style="color:#367bf0;">║  Bommisetty Pavaneshwar &mdash; CSE '26        ║</div>`);
+  addTermLine(`<div class="t-output" style="color:#367bf0;">║  ML Engineer | Distributed Systems           ║</div>`);
+  addTermLine(`<div class="t-output" style="color:#367bf0;">╚══════════════════════════════════════════════╝</div>`);
+  addTermLine(`<div class="t-output">Type <span class="t-success">help</span> for available commands.<br></div>`);
+}
+
+function addNfCommand() {
+  printPrompt('neofetch');
+  addTermLine('<div class="t-output t-success">Opening neofetch window...</div>');
+}
+
+function printPrompt(cmd) {
+  addTermLine(`<div class="t-cmd-line"><span class="t-prompt">root</span><span class="t-at">@pavaneshwar</span>:<span class="t-dir">~</span>#&nbsp;${escHtml(cmd)}</div>`);
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+const COMMANDS = {
+  help: () => `<div class="t-output"><br>
+<span class="t-success">Available Commands:</span><br>
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━<br>
+<span class="t-at">whoami</span>        — Display user profile<br>
+<span class="t-at">skills</span>        — List all technical skills<br>
+<span class="t-at">projects</span>      — Show project portfolio<br>
+<span class="t-at">experience</span>    — Work experience details<br>
+<span class="t-at">education</span>     — Academic background<br>
+<span class="t-at">certs</span>         — Certifications & awards<br>
+<span class="t-at">contact</span>       — Contact information<br>
+<span class="t-at">neofetch</span>      — System / profile info<br>
+<span class="t-at">ls</span>            — List directory contents<br>
+<span class="t-at">cat resume</span>    — View resume<br>
+<span class="t-at">nmap</span>          — Scan skill ports<br>
+<span class="t-at">ping github</span>   — Ping GitHub<br>
+<span class="t-at">uname -a</span>      — System information<br>
+<span class="t-at">ps aux</span>        — Running processes<br>
+<span class="t-at">ifconfig</span>      — Network information<br>
+<span class="t-at">matrix</span>        — Toggle matrix rain<br>
+<span class="t-at">clear</span>         — Clear terminal<br>
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━<br><br></div>`,
+  whoami: () => `<div class="t-output"><br>
+<span class="t-success">▸ Name:</span>       Bommisetty Pavaneshwar<br>
+<span class="t-success">▸ Role:</span>       Software & ML Engineer<br>
+<span class="t-success">▸ Location:</span>   Hyderabad / Bangalore, IN<br>
+<span class="t-success">▸ Class:</span>      CSE 2026 | CGPA 7.88<br>
+<span class="t-success">▸ Focus:</span>      Distributed Systems, AI, Test Automation<br>
+<span class="t-success">▸ Email:</span>      pavaneswar224@gmail.com<br>
+<span class="t-success">▸ Status:</span>     <span style="color:var(--kali-green);animation:blink 1s step-end infinite">● AVAILABLE FOR OPPORTUNITIES</span><br><br></div>`,
+  skills: () => `<div class="t-output"><br>
+<span class="t-success">── Languages & Platforms ──</span><br>
+Java  Python  C++  JavaScript  SQL<br>
+OOP  Design Patterns  DSA  Clean Code<br><br>
+<span class="t-success">── Architecture & Cloud ──</span><br>
+Distributed Systems  Microservices  AWS  GCP<br>
+Serverless  Fault-tolerant Design  CRM Platforms<br><br>
+<span class="t-success">── Test Automation & Quality ──</span><br>
+Selenium WebDriver  JUnit  TDD  White-Box Testing<br>
+Code Coverage  CI-integrated Test Suites  SLA QA<br><br>
+<span class="t-success">── Telemetry & DevOps ──</span><br>
+Docker  GitHub Actions  CI/CD  Structured Logging<br>
+Performance Monitoring  Latency Benchmarking<br><br>
+<span class="t-success">── AI & Innovation ──</span><br>
+ML Integration  FastAPI  ETL Pipelines  Copilot<br>
+Agentforce Concepts  Einstein AI  Data-driven Dev<br><br>
+<span style="color:var(--text-dim)">[ Run "open skills" to see visual Skills window ]</span><br><br></div>`,
+  projects: () => { openWindow('win-projects'); return `<div class="t-output"><br><span class="t-success">Opening Projects window...</span><br>3 major projects indexed.<br><br></div>`; },
+  experience: () => `<div class="t-output"><br>
+<span class="t-success">═══ WORK EXPERIENCE ═══</span><br><br>
+<span class="t-at">Software & Data Engineering Intern</span><br>
+<span class="t-dir">Edufyi Technologies, Bangalore</span><br>
+<span class="t-prompt">Oct 2025 – Dec 2025</span><br><br>
+▸ Built automated ETL pipelines in Python/Java<br>
+  → Reduced manual overhead by <span class="t-success">40%</span><br>
+  → Saved <span class="t-success">15+ hrs/week</span><br><br>
+▸ Designed test strategies & automation frameworks<br>
+  → Reduced post-deploy bugs by <span class="t-success">20%</span><br>
+  → Participated in <span class="t-success">30+ code reviews</span><br><br>
+▸ Implemented structured logging & perf dashboards<br>
+  → Proactive bottleneck identification<br>
+  → Metrics-driven continuous improvement<br><br></div>`,
+  education: () => `<div class="t-output"><br>
+<span class="t-success">═══ EDUCATION ═══</span><br><br>
+<span class="t-at">B.E. Computer Science & Engineering</span><br>
+<span class="t-dir">SIMATS (Saveetha), Chennai</span><br>
+<span class="t-prompt">2022 – 2026</span><br><br>
+▸ CGPA: <span class="t-success">7.88 / 10.0</span><br>
+▸ Backlogs: <span class="t-success">0 (Clean Record)</span><br>
+▸ Meets Salesforce Futureforce eligibility<br><br></div>`,
+  certs: () => { openWindow('win-certs'); return `<div class="t-output"><br><span class="t-success">Certifications loaded:</span><br>▸ Software Engineering — JPMorgan Chase & Co.<br>▸ Oracle SQL Certified Specialist<br>▸ Ethical Hacking — NPTEL (IIT)<br>▸ Best Student Award 2026<br><br></div>`; },
+  contact: () => `<div class="t-output"><br>
+<span class="t-success">═══ CONTACT ═══</span><br><br>
+<span class="t-at">Email:</span>    pavaneswar224@gmail.com<br>
+<span class="t-at">Phone:</span>    +91 6305240281<br>
+<span class="t-at">GitHub:</span>   github.com/pavaneshwar<br>
+<span class="t-at">LinkedIn:</span> linkedin.com/in/pavaneshwar<br><br>
+<span style="color:var(--text-dim)">[ Run "mail" or open the Mail app to send a message ]</span><br><br></div>`,
+  neofetch: () => { openWindow('win-neofetch'); return `<div class="t-output"><span class="t-success">Launching neofetch...</span><br></div>`; },
+  'open skills': () => { openWindow('win-skills'); return `<div class="t-output"><span class="t-success">Opening Skills window...</span><br></div>`; },
+  ls: () => `<div class="t-output"><br>
+<span class="t-dir">projects/</span>&nbsp;&nbsp;&nbsp;<span class="t-dir">certs/</span>&nbsp;&nbsp;&nbsp;<span class="t-dir">.config/</span><br>
+<span style="color:#ff5f56">resume.pdf</span>&nbsp;&nbsp;<span class="t-success">skills.json</span>&nbsp;&nbsp;<span class="t-at">run_me.sh</span><br><br></div>`,
+  'cat resume': () => { viewDocument('resources/resume.pdf', 'Document Viewer — Resume.pdf'); return `<div class="t-output"><span class="t-success">Opening resume.pdf...</span><br></div>`; },
+  nmap: () => `<div class="t-output"><br>
+Starting Nmap 7.94 (<span class="t-at">nmap.org</span>)<br>
+Scanning pavaneshwar.dev (127.0.0.1)<br><br>
+PORT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;STATE&nbsp;&nbsp;SERVICE<br>
+<span class="t-success">22/tcp&nbsp;&nbsp;&nbsp;open&nbsp;&nbsp;&nbsp;Java</span><br>
+<span class="t-success">80/tcp&nbsp;&nbsp;&nbsp;open&nbsp;&nbsp;&nbsp;Python</span><br>
+<span class="t-success">443/tcp&nbsp;&nbsp;open&nbsp;&nbsp;&nbsp;MachineLearning</span><br>
+<span class="t-success">3306/tcp&nbsp;open&nbsp;&nbsp;&nbsp;SQL/Databases</span><br>
+<span class="t-success">8080/tcp&nbsp;open&nbsp;&nbsp;&nbsp;REST-APIs</span><br>
+<span class="t-success">9200/tcp&nbsp;open&nbsp;&nbsp;&nbsp;Docker/CI-CD</span><br>
+<span class="t-success">9300/tcp&nbsp;open&nbsp;&nbsp;&nbsp;AWS/Cloud</span><br><br>
+7 skills open, 0 filtered. Done in 0.12s.<br><br></div>`,
+  'ping github': () => `<div class="t-output"><br>
+PING github.com (140.82.112.4) 56 bytes<br>
+64 bytes from github.com: icmp_seq=1 ttl=55 time=8.2ms<br>
+64 bytes from github.com: icmp_seq=2 ttl=55 time=7.9ms<br>
+64 bytes from github.com: icmp_seq=3 ttl=55 time=8.1ms<br><br>
+--- github.com ping statistics ---<br>
+3 packets transmitted, 3 received, <span class="t-success">0% packet loss</span><br><br></div>`,
+  'uname -a': () => `<div class="t-output">Linux pavaneshwar-kali 6.6.9-amd64 #1 SMP PREEMPT Kali 6.6.9-1kali1 (2024-01-08) x86_64 GNU/Linux<br><br></div>`,
+  'ps aux': () => `<div class="t-output"><br>
+USER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PID&nbsp;&nbsp;%CPU&nbsp;%MEM&nbsp;COMMAND<br>
+root&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1001&nbsp;&nbsp;2.1&nbsp;&nbsp;4.2&nbsp;&nbsp;<span class="t-success">java-backend</span><br>
+root&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1002&nbsp;&nbsp;3.4&nbsp;&nbsp;5.1&nbsp;&nbsp;<span class="t-success">python-ml-engine</span><br>
+root&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1003&nbsp;&nbsp;1.2&nbsp;&nbsp;2.0&nbsp;&nbsp;<span class="t-success">docker-daemon</span><br>
+root&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1004&nbsp;&nbsp;0.8&nbsp;&nbsp;1.5&nbsp;&nbsp;<span class="t-success">selenium-tests</span><br>
+root&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1005&nbsp;&nbsp;4.2&nbsp;&nbsp;6.3&nbsp;&nbsp;<span class="t-success">anomaly-detection-api</span><br>
+root&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1006&nbsp;&nbsp;0.3&nbsp;&nbsp;0.8&nbsp;&nbsp;<span class="t-success">ci-cd-pipeline</span><br><br></div>`,
+  ifconfig: () => `<div class="t-output"><br>
+<span class="t-success">eth0:</span> flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inet <span class="t-at">192.168.1.42</span>&nbsp;&nbsp;netmask 255.255.255.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inet6 fe80::1 prefixlen 64<br><br>
+<span class="t-success">lo:</span>&nbsp;&nbsp;&nbsp;&nbsp;flags=73&lt;UP,LOOPBACK,RUNNING&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inet 127.0.0.1  netmask 255.0.0.0<br><br></div>`,
+  matrix: () => { toggleMatrix(); return `<div class="t-output"><span class="t-success">Matrix rain toggled.</span><br><br></div>`; },
+  mail: () => { openWindow('win-mail'); return `<div class="t-output"><span class="t-success">Opening mail client...</span><br></div>`; },
+  clear: null,
+  sudo: () => `<div class="t-error">You are already root.<br><br></div>`,
+  'ls -la': () => `<div class="t-output"><br>
+total 48<br>
+drwxr-xr-x  2 root root 4096 Apr 2026 <span class="t-dir">.</span><br>
+drwxr-xr-x 18 root root 4096 Apr 2026 <span class="t-dir">..</span><br>
+-rw-r--r--  1 root root 8192 Apr 2026 <span style="color:#ff5f56">resume.pdf</span><br>
+-rw-r--r--  1 root root 2048 Apr 2026 <span class="t-success">skills.json</span><br>
+drwxr-xr-x  4 root root 4096 Apr 2026 <span class="t-dir">projects/</span><br>
+drwxr-xr-x  2 root root 4096 Apr 2026 <span class="t-dir">certs/</span><br>
+-rwxr-xr-x  1 root root  512 Apr 2026 <span class="t-at">run_me.sh</span><br><br></div>`,
+};
+
+cmdInput.addEventListener('keydown', e => {
+  if(e.key === 'Enter') {
+    const raw = cmdInput.value.trim();
+    if(!raw) return;
+    cmdStack.unshift(raw); cmdIdx = -1;
+    printPrompt(raw);
+    const cmd = raw.toLowerCase();
+    if(cmd === 'clear') { termHistory.innerHTML = ''; }
+    else if(COMMANDS[cmd]) { addTermLine(COMMANDS[cmd]()); }
+    else if(cmd.startsWith('open ')) {
+      const target = cmd.slice(5);
+      const map = {skills:'win-skills',projects:'win-projects',terminal:'win-terminal',files:'win-files',mail:'win-mail',certs:'win-certs',settings:'win-settings',resume:'win-docviewer'};
+      
+      if (target === 'resume') {
+          viewDocument('resources/resume.pdf', 'Document Viewer — Resume.pdf');
+          addTermLine(`<div class="t-output t-success">Opening resume.pdf...<br></div>`);
+      } else if(map[target]) { 
+          openWindow(map[target]); 
+          addTermLine(`<div class="t-output t-success">Opening ${target}...<br></div>`); 
+      } else {
+          addTermLine(`<div class="t-error">bash: open: ${escHtml(target)}: not found<br></div>`);
+      }
+    }
+    else { addTermLine(`<div class="t-error">bash: ${escHtml(raw)}: command not found. Try 'help'.<br></div>`); }
+    cmdInput.value = '';
+  }
+  if(e.key==='ArrowUp') { if(cmdIdx < cmdStack.length-1) { cmdIdx++; cmdInput.value = cmdStack[cmdIdx]; } e.preventDefault(); }
+  if(e.key==='ArrowDown') { if(cmdIdx > 0) { cmdIdx--; cmdInput.value = cmdStack[cmdIdx]; } else { cmdIdx=-1; cmdInput.value=''; } e.preventDefault(); }
+  if(e.key==='Tab') {
+    e.preventDefault();
+    const partial = cmdInput.value.toLowerCase();
+    const match = Object.keys(COMMANDS).find(k => k.startsWith(partial) && k!==partial);
+    if(match) cmdInput.value = match;
+  }
+});
+
+// ── WALLPAPER ──
+const wallpapers = {
+  default: 'radial-gradient(ellipse at 20% 50%, rgba(54,123,240,0.08) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(0,212,255,0.06) 0%, transparent 50%), #0d0e17',
+  purple: 'radial-gradient(ellipse at 30% 40%, rgba(155,89,182,0.2) 0%, transparent 60%), radial-gradient(ellipse at 70% 70%, rgba(54,123,240,0.1) 0%, transparent 50%), #0d0014',
+  ocean: 'radial-gradient(ellipse at 50% 30%, rgba(0,212,255,0.15) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(0,100,200,0.1) 0%, transparent 50%), #001520',
+  hacker: 'radial-gradient(ellipse at 50% 50%, rgba(255,32,82,0.12) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(255,0,0,0.06) 0%, transparent 50%), #120000',
+  matrix: 'linear-gradient(180deg, #000 0%, #001100 100%)',
+};
+function setWallpaper(key) {
+  const wp = document.getElementById('wallpaper');
+  if(key==='matrix') { toggleMatrix(true); wp.style.background = wallpapers.matrix; }
+  else { toggleMatrix(false); wp.style.background = wallpapers[key]||wallpapers.default; }
+}
+function setCustomWallpaper() {
+  const url = document.getElementById('custom-url').value;
+  if(url) { document.getElementById('wallpaper').style.background = `url('${url}') center/cover no-repeat`; }
+}
+
+// ── MATRIX RAIN ──
+const canvas = document.getElementById('matrix-canvas');
+const mctx = canvas.getContext('2d');
+let matrixOn = false, matrixRAF;
+function toggleMatrix(force) {
+  matrixOn = (force !== undefined) ? force : !matrixOn;
+  canvas.style.display = matrixOn ? 'block' : 'none';
+  if(matrixOn) { resizeMatrix(); drawMatrix(); }
+  else { cancelAnimationFrame(matrixRAF); mctx.clearRect(0,0,canvas.width,canvas.height); }
+}
+function resizeMatrix() { canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホ';
+let drops = [];
+function drawMatrix() {
+  if(!matrixOn) return;
+  const cols = Math.floor(canvas.width/14);
+  if(drops.length !== cols) drops = Array(cols).fill(1);
+  mctx.fillStyle='rgba(0,0,0,0.04)';
+  mctx.fillRect(0,0,canvas.width,canvas.height);
+  mctx.fillStyle='#00ff41'; mctx.font='14px Share Tech Mono';
+  drops.forEach((y,i) => {
+    const c = chars[Math.floor(Math.random()*chars.length)];
+    mctx.fillText(c, i*14, y*14);
+    if(y*14>canvas.height && Math.random()>0.975) drops[i]=0;
+    drops[i]++;
+  });
+  matrixRAF = requestAnimationFrame(drawMatrix);
+}
+window.addEventListener('resize', () => { if(matrixOn) resizeMatrix(); });
+
+// ── MAIL ──
+function sendMail() {
+  const subject = encodeURIComponent(document.getElementById('mail-subject').value||'Portfolio Connection');
+  const body = encodeURIComponent(document.getElementById('mail-msg').value);
+  window.location.href = `mailto:pavaneswar224@gmail.com?subject=${subject}&body=${body}`;
+  const btn = document.getElementById('mail-send');
+  btn.textContent = '✓ Transmission Sent!';
+  btn.style.background = 'var(--kali-green)';
+  btn.style.color = 'black';
+  setTimeout(() => { btn.textContent = '▶ Send Transmission'; btn.style.background=''; btn.style.color=''; closeWindow('win-mail'); }, 2000);
+  showNotif('Mail','Message queued successfully');
+}
+</script>
+</body>
+</html>
